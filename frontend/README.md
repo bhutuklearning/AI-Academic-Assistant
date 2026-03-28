@@ -1,6 +1,6 @@
-# UniPrep Copilot — Frontend
+# Frontend
 
-React application (Vite + Tailwind) for UniPrep Copilot. Provides subject workspaces, AI content generation, exam mode, focus sessions, and community features.
+React application (Vite + Tailwind) for the Project. Provides subject workspaces, AI content generation, exam mode, focus sessions, and community features.
 
 ## Tech Stack
 - React 19, Vite 7
