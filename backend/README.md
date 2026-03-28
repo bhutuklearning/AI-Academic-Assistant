@@ -1,4 +1,4 @@
-# UniPrep Copilot — Backend
+# Backend
 
 Backend API for UniPrep Copilot. Implements authentication, subject/context management, AI-powered content generation, exam planning, quizzes, study sessions, and community features.
 
