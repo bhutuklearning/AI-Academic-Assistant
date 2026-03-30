@@ -220,7 +220,7 @@ const AdminDashboard = () => {
             </div>
             <div>
               <h1 className="font-bold text-gray-900 text-sm leading-none">Admin Control Panel</h1>
-              <p className="text-[11px] text-gray-400 mt-0.5">UniPrep Copilot</p>
+              <p className="text-[11px] text-gray-400 mt-0.5">Academic Help Buddy</p>
             </div>
           </div>
 

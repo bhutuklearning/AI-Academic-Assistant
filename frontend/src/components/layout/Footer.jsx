@@ -12,7 +12,7 @@ const Footer = () => {
           <div className="col-span-1 md:col-span-1">
             <div className="flex items-center mb-4">
               <BookOpen className="h-6 w-6 text-blue-400 mr-2" />
-              <span className="text-xl font-bold">UniPrep Copilot</span>
+              <span className="text-xl font-bold">Academic Help Buddy</span>
             </div>
             <p className="text-gray-300 mb-4 text-sm">
               AI-powered study companion for university students. Generate notes, create exam blueprints, and share content with your community.
@@ -129,7 +129,7 @@ const Footer = () => {
 
         <div className="border-t border-gray-700 mt-8 pt-6 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm">
-            © {currentYear} UniPrep Copilot. All rights reserved.
+            © {currentYear} Academic Help Buddy. All rights reserved.
           </p>
           <div className="mt-4 md:mt-0 flex items-center text-gray-400 text-sm">
             <span>Built with</span>

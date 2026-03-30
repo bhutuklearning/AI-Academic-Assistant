@@ -81,7 +81,7 @@ const Landing = () => {
                 <BookOpen className="text-white" size={24} />
               </div>
               <span className="text-xl sm:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-900 to-slate-800">
-                UniPrep Copilot
+                Academic Help Buddy
               </span>
             </Link>
             <div className="flex items-center gap-3 sm:gap-5">
@@ -250,7 +250,7 @@ const Landing = () => {
             >
               <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6 leading-tight">
                 Why Top Students Choose <br /> 
-                <span className="text-blue-600">UniPrep Copilot</span>
+                <span className="text-blue-600">Academic Help Buddy</span>
               </h2>
               <p className="text-slate-600 text-lg mb-8">
                 Outperform the curve by leveraging the most advanced study strategies translated directly into a simple, automated application.

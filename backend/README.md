@@ -1,6 +1,6 @@
 # Backend
 
-The backend is a RESTful API server that powers the UniPrep Copilot academic assistant platform. It handles authentication, AI-driven content generation, file management, community features, and all core business logic for the application.
+The backend is a RESTful API server that powers the Academic Help Buddy academic assistant platform. It handles authentication, AI-driven content generation, file management, community features, and all core business logic for the application.
 
 ---
 

@@ -35,11 +35,11 @@ const Header = ({ onToggleSidebar, sidebarOpen }) => {
             >
               <img
                 src="/logo.png"
-                alt="UniPrep Logo"
+                alt="Academic Help Buddy Logo"
                 className="h-7 w-7 sm:h-8 sm:w-8 object-contain"
               />
               <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-blue-600 truncate">
-                UniPrep
+                Academic Help Buddy
               </h1>
             </Link>
           </div>

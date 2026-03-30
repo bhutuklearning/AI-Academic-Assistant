@@ -93,12 +93,12 @@ app.use('/api/admin', adminRoutes);
 
 // Normal Route
 app.get('/', (req, res) => {
-  res.send('Welcome to the UniPrep Copilot API');
+  res.send('Welcome to the Academic Help Buddy API');
 });
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', message: 'UniPrep Copilot API is running' });
+  res.json({ status: 'OK', message: 'Academic Help Buddy API is running' });
 });
 
 // AI API key test endpoint with detailed diagnostics

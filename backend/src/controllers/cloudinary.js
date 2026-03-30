@@ -111,7 +111,7 @@ export const uploadFromBrowser = async (req, res) => {
     // ── Build Cloudinary upload options ──────────────────────────────────────
     const uploadOptions = {
       resource_type: resourceType,
-      folder: 'uniprep-copilot',
+      folder: 'academic-help-buddy',
       tags,
       use_filename: true,
       unique_filename: true,
@@ -185,7 +185,7 @@ export const uploadMultiple = async (req, res) => {
 
       const result = await streamUpload(buffer, {
         resource_type: resourceType,
-        folder: 'uniprep-copilot',
+        folder: 'academic-help-buddy',
         tags,
         use_filename: true,
         unique_filename: true,
