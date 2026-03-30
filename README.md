@@ -67,18 +67,11 @@ Academic Help Buddy is an AI-powered academic assistant platform designed to hel
 
 The application follows a standard client-server architecture:
 
-```
-                  HTTPS                   HTTPS
-  Browser  ------------------>  Backend  ------------------>  MongoDB Atlas
-  (React)                      (Express)                     (Database)
-                                  |
-                                  | HTTPS
-                                  |---------------->  OpenRouter API
-                                  |                  (AI / LLM)
-                                  |
-                                  |---------------->  Cloudinary
-                                                     (File Storage / CDN)
-```
+
+<p align="center">
+  <img src="frontend/public/Methodology.png" alt="Academic Help Buddy Architecture & Methodology" width="900">
+</p>
+
 
 - **Frontend** -- React SPA served from Vercel. Communicates with the backend via RESTful API calls.
 - **Backend** -- Express.js server deployed on Render. Handles all business logic, AI orchestration, authentication, and file processing.
