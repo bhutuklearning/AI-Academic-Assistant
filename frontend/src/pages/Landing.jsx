@@ -97,7 +97,7 @@ const Landing = () => {
                   )}
                   <Link
                     to="/dashboard"
-                    className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium rounded-xl hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-300 text-sm sm:text-base transform hover:-translate-y-0.5"
+                    className="px-3 py-1.5 md:px-5 md:py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium rounded-lg md:rounded-xl hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-300 text-xs md:text-base transform hover:-translate-y-0.5"
                   >
                     Dashboard
                   </Link>
@@ -112,7 +112,7 @@ const Landing = () => {
                   </Link>
                   <Link
                     to="/login"
-                    className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium rounded-xl hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-300 text-sm sm:text-base transform hover:-translate-y-0.5"
+                    className="px-3 py-1.5 md:px-5 md:py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium rounded-lg md:rounded-xl hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-300 text-xs md:text-base transform hover:-translate-y-0.5"
                   >
                     Get Started
                   </Link>
