@@ -1,12 +1,14 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { BookOpen, Palette, Users, Home, ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { BookOpen, Palette, Users, Home, ChevronLeft, ChevronRight, X, ShieldAlert } from 'lucide-react';
 import { useEffect, useRef } from 'react';
+import useAuthStore from '../../store/authStore';
 
 const Sidebar = ({ onClose, isCollapsed, onToggleCollapse }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const sidebarRef = useRef(null);
   const firstLinkRef = useRef(null);
+  const { user } = useAuthStore();
 
   const navItems = [
     { path: '/dashboard', icon: Home, label: 'Dashboard' },
@@ -14,6 +16,10 @@ const Sidebar = ({ onClose, isCollapsed, onToggleCollapse }) => {
     { path: '/styles', icon: Palette, label: 'Answer Styles' },
     { path: '/community', icon: Users, label: 'Community' }
   ];
+
+  if (user?.role === 'admin') {
+    navItems.push({ path: '/admin', icon: ShieldAlert, label: 'Admin Panel' });
+  }
 
   // Close mobile sidebar on route change (but not on initial mount)
   const prevPathnameRef = useRef(location.pathname);

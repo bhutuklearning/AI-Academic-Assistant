@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { ShieldAlert, BookOpen, Eye, EyeOff, Zap } from 'lucide-react';
 import useAuthStore from '../store/authStore';
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
-  const [showPassword, setShowPassword] = useState(false); // 🔑 NEW
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -16,6 +18,7 @@ const Login = () => {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [adminLoading, setAdminLoading] = useState(false);
 
   const { login, register } = useAuthStore();
   const navigate = useNavigate();
@@ -24,14 +27,19 @@ const Login = () => {
     e.preventDefault();
     setError('');
     setLoading(true);
-
     try {
       const result = isLogin
         ? await login(formData.email, formData.password)
         : await register(formData);
 
       if (result.success) {
-        navigate('/dashboard');
+        // Check user role from store and redirect accordingly
+        const { user } = useAuthStore.getState();
+        if (user?.role === 'admin') {
+          navigate('/admin');
+        } else {
+          navigate('/dashboard');
+        }
       } else {
         setError(result.error);
       }
@@ -42,167 +50,198 @@ const Login = () => {
     }
   };
 
+  // Quick Admin Login
+  const handleAdminLogin = async () => {
+    setAdminLoading(true);
+    setError('');
+    try {
+      const result = await login('avoy123@gmail.com', 'avoy123@gmail.com');
+      if (result.success) {
+        navigate('/admin');
+      } else {
+        setError(result.error || 'Admin login failed. Make sure the backend is running.');
+      }
+    } catch {
+      setError('Admin login failed. Please try again.');
+    } finally {
+      setAdminLoading(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-blue-50 to-indigo-100 px-4">
-      <div className="w-full max-w-md">
-        <div className="bg-white rounded-2xl shadow-xl border border-indigo-100 p-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 px-4 relative overflow-hidden">
+      {/* Background glows */}
+      <div className="absolute top-[-20%] left-[-10%] w-96 h-96 bg-indigo-600/20 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-20%] right-[-10%] w-96 h-96 bg-blue-600/20 rounded-full blur-[120px] pointer-events-none" />
+
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-md relative z-10"
+      >
+        {/* Logo */}
+        <div className="text-center mb-8">
+          <Link to="/" className="inline-flex items-center gap-2.5 group">
+            <div className="p-2 bg-indigo-600 rounded-xl">
+              <BookOpen className="text-white" size={22} />
+            </div>
+            <span className="text-xl font-bold text-white">UniPrep Copilot</span>
+          </Link>
+        </div>
+
+        <div className="bg-white/10 backdrop-blur-2xl rounded-3xl border border-white/20 shadow-2xl p-8">
           {/* Header */}
           <div className="mb-6 text-center">
-            <h2 className="text-3xl font-bold text-gray-900">
-              {isLogin ? 'Welcome Back' : 'Create Your Account'}
+            <h2 className="text-2xl font-bold text-white">
+              {isLogin ? 'Welcome Back' : 'Create Account'}
             </h2>
-            <p className="mt-2 text-sm text-gray-600">
+            <p className="mt-1.5 text-sm text-slate-300">
               {isLogin
                 ? 'Login to continue your exam preparation'
-                : 'Start your personalized university preparation'}
+                : 'Start your personalized university prep journey'}
             </p>
           </div>
 
           {/* Error */}
           {error && (
-            <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <motion.div
+              initial={{ opacity: 0, y: -5 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-4 rounded-xl border border-red-400/30 bg-red-500/20 px-4 py-3 text-sm text-red-200"
+            >
               {error}
-            </div>
+            </motion.div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Signup Fields */}
             {!isLogin && (
-              <div className="space-y-4 rounded-xl border border-indigo-100 bg-indigo-50/40 p-4">
-                <p className="text-xs text-indigo-700 font-medium">
-                  Please fill all the details correctly.
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                className="space-y-3 rounded-2xl border border-indigo-400/20 bg-indigo-500/10 p-4"
+              >
+                <p className="text-xs text-indigo-300 font-medium">
+                  Fill all details carefully to complete registration.
                 </p>
-
-                <Input
-                  label="Full Name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                />
-
-                <Input
-                  label="University"
-                  value={formData.university}
-                  onChange={(e) =>
-                    setFormData({ ...formData, university: e.target.value })
-                  }
-                />
-
-                <Input
-                  label="College"
-                  value={formData.college}
-                  onChange={(e) =>
-                    setFormData({ ...formData, college: e.target.value })
-                  }
-                />
-
-                <Input
-                  label="Branch"
-                  value={formData.branch}
-                  onChange={(e) =>
-                    setFormData({ ...formData, branch: e.target.value })
-                  }
-                />
-
-                <Input
-                  label="Semester"
-                  type="number"
-                  min="1"
-                  max="8"
+                <GlassInput label="Full Name" value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
+                <GlassInput label="University" value={formData.university}
+                  onChange={(e) => setFormData({ ...formData, university: e.target.value })} />
+                <GlassInput label="College" value={formData.college}
+                  onChange={(e) => setFormData({ ...formData, college: e.target.value })} />
+                <GlassInput label="Branch" value={formData.branch}
+                  onChange={(e) => setFormData({ ...formData, branch: e.target.value })} />
+                <GlassInput label="Semester" type="number" min="1" max="8"
                   value={formData.semester}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      semester: parseInt(e.target.value)
-                    })
-                  }
-                />
-              </div>
+                  onChange={(e) => setFormData({ ...formData, semester: parseInt(e.target.value) })} />
+              </motion.div>
             )}
 
-            {/* Email */}
-            <Input
+            <GlassInput
               label="Email Address"
               type="email"
               value={formData.email}
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             />
 
-            {/* Password with toggle */}
+            {/* Password */}
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
-                Password
-              </label>
+              <label className="mb-1.5 block text-sm font-medium text-slate-200">Password</label>
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
                   value={formData.password}
-                  onChange={(e) =>
-                    setFormData({ ...formData, password: e.target.value })
-                  }
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 pr-12 text-sm text-gray-900
-                    focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  className="w-full rounded-xl bg-white/10 border border-white/20 px-4 py-2.5 pr-12 text-sm text-white placeholder-slate-400
+                    focus:outline-none focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-400/50 transition-all"
+                  placeholder="Enter your password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-3 flex items-center text-xs font-medium text-gray-500 hover:text-indigo-600"
+                  className="absolute inset-y-0 right-3 flex items-center text-slate-400 hover:text-white transition-colors"
                 >
-                  {showPassword ? 'Hide' : 'Show'}
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
             </div>
 
             {/* Submit */}
-            <button
+            <motion.button
               type="submit"
               disabled={loading}
-              className="mt-2 w-full rounded-xl bg-indigo-600 py-2.5 font-medium text-white transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.99 }}
+              className="mt-2 w-full rounded-xl bg-indigo-600 py-3 font-semibold text-white transition-all hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-transparent disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-indigo-900/50"
             >
-              {loading ? 'Please wait…' : isLogin ? 'Login' : 'Sign Up'}
-            </button>
+              {loading ? 'Please wait…' : isLogin ? 'Login to Continue' : 'Create Account'}
+            </motion.button>
           </form>
 
+          {/* Divider */}
+          {isLogin && (
+            <>
+              <div className="my-5 flex items-center gap-3">
+                <div className="flex-1 h-px bg-white/10" />
+                <span className="text-xs text-slate-400 font-medium">OR</span>
+                <div className="flex-1 h-px bg-white/10" />
+              </div>
+
+              {/* ⭐ Admin Quick Login Button */}
+              <motion.button
+                onClick={handleAdminLogin}
+                disabled={adminLoading}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="w-full flex items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-700 py-3 font-semibold text-white transition-all hover:from-purple-500 hover:to-indigo-600 disabled:opacity-50 shadow-lg shadow-purple-900/40 border border-purple-400/20"
+              >
+                <ShieldAlert size={18} />
+                {adminLoading ? 'Logging in as Admin…' : 'Login as Admin'}
+                {!adminLoading && <Zap size={14} className="text-yellow-300" />}
+              </motion.button>
+              <p className="text-[11px] text-slate-500 text-center mt-2">
+                Quick access for administrators only
+              </p>
+            </>
+          )}
+
           {/* Toggle */}
-          <p className="mt-5 text-center text-sm text-gray-600">
+          <p className="mt-6 text-center text-sm text-slate-400">
             {isLogin ? "Don't have an account?" : 'Already have an account?'}{' '}
             <button
-              onClick={() => setIsLogin(!isLogin)}
-              className="font-medium text-indigo-600 hover:text-indigo-700"
+              onClick={() => { setIsLogin(!isLogin); setError(''); }}
+              className="font-semibold text-indigo-400 hover:text-indigo-300 transition-colors"
             >
               {isLogin ? 'Sign up' : 'Login'}
             </button>
           </p>
 
           {/* Return to home */}
-          <div className="mt-6 text-center">
-            <Link
-              to="/"
-              className="text-sm font-medium text-gray-500 hover:text-indigo-600"
-            >
-              ← Return to the welcome page
+          <div className="mt-4 text-center">
+            <Link to="/" className="text-xs text-slate-500 hover:text-slate-300 transition-colors">
+              ← Return to Landing Page
             </Link>
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };
 
-/* Reusable Input Component */
-const Input = ({ label, type = 'text', ...props }) => (
+/* Reusable Glass Input */
+const GlassInput = ({ label, type = 'text', ...props }) => (
   <div>
-    <label className="mb-1 block text-sm font-medium text-gray-700">
-      {label}
-    </label>
+    <label className="mb-1.5 block text-sm font-medium text-slate-200">{label}</label>
     <input
       type={type}
       required
       {...props}
-      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900
-        focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      className="w-full rounded-xl bg-white/10 border border-white/20 px-4 py-2.5 text-sm text-white placeholder-slate-400
+        focus:outline-none focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-400/50 transition-all"
+      placeholder={`Enter ${label.toLowerCase()}`}
     />
   </div>
 );

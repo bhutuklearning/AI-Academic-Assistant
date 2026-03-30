@@ -18,6 +18,7 @@ import quizRoutes from './routes/quiz.js';
 import sessionRoutes from './routes/sessions.js';
 import communityRoutes from './routes/community.js';
 import cloudinaryRoutes from './routes/cloudinary.js';
+import adminRoutes from './routes/admin.js';
 import connectDB from './config/db.js';
 
 const app = express();
@@ -88,6 +89,7 @@ app.use('/api/quiz', quizRoutes);
 app.use('/api/sessions', sessionRoutes);
 app.use('/api/community', communityRoutes);
 app.use('/api/cloudinary', cloudinaryRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Normal Route
 app.get('/', (req, res) => {

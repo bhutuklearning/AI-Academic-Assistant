@@ -12,8 +12,10 @@ import PostDetail from './pages/PostDetail';
 import FocusMode from './pages/FocusMode';
 import ContentView from './pages/ContentView';
 import Profile from './pages/Profile';
+import AdminDashboard from './pages/AdminDashboard';
 import Layout from './components/layout/Layout';
 import PrivateRoute from './components/common/PrivateRoute';
+import AdminRoute from './components/common/AdminRoute';
 
 function App() {
   const { fetchUser, isAuthenticated } = useAuthStore();
@@ -109,6 +111,14 @@ function App() {
                 <Profile />
               </Layout>
             </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <AdminDashboard />
+            </AdminRoute>
           }
         />
         <Route path="*" element={<Navigate to="/" replace />} />

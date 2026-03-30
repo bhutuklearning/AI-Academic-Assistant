@@ -8,7 +8,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-console.log('Cloudinary configuration loaded and initialized successfully');
+console.log('✓ Cloudinary configuration loaded and initialized successfully');
 
 // ─── File size limits per type (in bytes) ─────────────────────────────────────
 const FILE_SIZE_LIMITS = {

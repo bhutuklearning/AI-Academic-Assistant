@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import useAuthStore from '../store/authStore';
-import { BookOpen, Users, Award, Zap, ArrowRight, CheckCircle, Sparkles } from 'lucide-react';
+import { BookOpen, Users, Award, Zap, ArrowRight, CheckCircle, Sparkles, BrainCircuit, Rocket, ShieldAlert } from 'lucide-react';
 import Footer from '../components/layout/Footer';
 
 const Landing = () => {
-  const { isAuthenticated, fetchUser } = useAuthStore();
+  const { isAuthenticated, fetchUser, user } = useAuthStore();
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
@@ -18,67 +19,100 @@ const Landing = () => {
 
   const features = [
     {
-      icon: <BookOpen className="text-blue-600" size={32} />,
+      icon: <BrainCircuit className="text-blue-500" size={36} />,
       title: 'AI-Powered Study Notes',
-      description: 'Generate comprehensive study notes tailored to your syllabus and learning style.'
+      description: 'Generate comprehensive study notes tailored to your syllabus and learning style instantly.'
     },
     {
-      icon: <Zap className="text-yellow-600" size={32} />,
+      icon: <Zap className="text-amber-500" size={36} />,
       title: 'Smart Exam Preparation',
-      description: 'Create exam blueprints, revision planners, and mock papers with AI assistance.'
+      description: 'Create exam blueprints, revision planners, and smart mock papers with AI assistance.'
     },
     {
-      icon: <Users className="text-green-600" size={32} />,
+      icon: <Users className="text-emerald-500" size={36} />,
       title: 'Community Sharing',
-      description: 'Share your study materials and discover content from other students.'
+      description: 'Share your smartest study materials and discover genius content from peers worldwide.'
     },
     {
-      icon: <Award className="text-purple-600" size={32} />,
+      icon: <Award className="text-indigo-500" size={36} />,
       title: 'Personalized Learning',
-      description: 'Customize answer styles and track your progress across all subjects.'
+      description: 'Customize answer styles entirely and track your progress natively across all subjects.'
     }
   ];
 
   const benefits = [
-    'Generate study notes in seconds',
-    'Create exam blueprints automatically',
-    'Share and discover community content',
-    'Track your study progress',
-    'Customize your learning style',
-    'Access from anywhere, anytime'
+    'Generate intelligent study context in seconds',
+    'Build and export realistic exam blueprints',
+    'Share and discover vibrant community content',
+    'Track analytical study progress effortlessly',
+    'Adapt and customize your exact learning style',
+    'Access resources reliably from anywhere, anytime'
   ];
 
+  // Animation Variants
+  const fadeUpVariant = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } }
+  };
+  
+  const staggerContainer = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen bg-[#fafcff] text-slate-800 selection:bg-blue-100 font-sans overflow-x-hidden">
+      
+      {/* Decorative Background Elements */}
+      <div className="fixed top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-400/20 rounded-full blur-[120px] pointer-events-none z-0" />
+      <div className="fixed bottom-[-10%] right-[-5%] w-[40%] h-[40%] bg-indigo-400/10 rounded-full blur-[120px] pointer-events-none z-0" />
+
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 backdrop-blur-md bg-white/70 border-b border-white/40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
+      <motion.nav 
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="sticky top-0 z-50 backdrop-blur-xl bg-white/70 border-b border-gray-100 shadow-[0_2px_20px_-10px_rgba(0,0,0,0.05)]"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5">
           <div className="flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <BookOpen className="text-blue-600" size={28} />
-              <span className="text-lg sm:text-2xl font-bold text-gray-800">
+            <Link to="/" className="flex items-center gap-2.5 group">
+              <div className="p-2 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl group-hover:scale-105 transition-transform duration-300">
+                <BookOpen className="text-white" size={24} />
+              </div>
+              <span className="text-xl sm:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-900 to-slate-800">
                 UniPrep Copilot
               </span>
-            </div>
-            <div className="flex items-center gap-2 sm:gap-4">
+            </Link>
+            <div className="flex items-center gap-3 sm:gap-5">
               {isAuthenticated ? (
-                <Link
-                  to="/dashboard"
-                  className="px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm sm:text-base"
-                >
-                  Dashboard
-                </Link>
+                <>
+                  {user?.role === 'admin' && (
+                    <Link
+                      to="/admin"
+                      className="hidden sm:flex items-center gap-2 px-4 py-2 text-sm font-semibold text-purple-700 bg-purple-50 rounded-lg hover:bg-purple-100 transition"
+                    >
+                      <ShieldAlert size={16} /> Admin Panel
+                    </Link>
+                  )}
+                  <Link
+                    to="/dashboard"
+                    className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium rounded-xl hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-300 text-sm sm:text-base transform hover:-translate-y-0.5"
+                  >
+                    Dashboard
+                  </Link>
+                </>
               ) : (
                 <>
                   <Link
                     to="/login"
-                    className="hidden sm:block px-4 py-2 text-gray-700 hover:text-gray-900 transition"
+                    className="hidden sm:block px-4 py-2 font-medium text-slate-600 hover:text-blue-600 transition-colors"
                   >
                     Login
                   </Link>
                   <Link
                     to="/login"
-                    className="px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm sm:text-base"
+                    className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium rounded-xl hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-300 text-sm sm:text-base transform hover:-translate-y-0.5"
                   >
                     Get Started
                   </Link>
@@ -87,112 +121,193 @@ const Landing = () => {
             </div>
           </div>
         </div>
-      </nav>
+      </motion.nav>
 
-      {/* Hero */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="text-center">
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-            Your AI-Powered
-            <span className="text-blue-600"> Study Companion</span>
-          </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            Generate comprehensive study notes, exam blueprints, and revision materials in seconds.
-            Join a community of students sharing knowledge and accelerating their learning.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+      {/* Hero Section */}
+      <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20 sm:pt-32 sm:pb-28">
+        <div className="text-center max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 border border-blue-100 text-blue-700 font-medium text-sm mb-8 shadow-sm"
+          >
+            <Sparkles size={16} className="text-amber-400" />
+            <span>The Next Generation of AI Study Tools is Here</span>
+          </motion.div>
+          
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="text-5xl md:text-7xl font-extrabold text-slate-900 mb-8 leading-tight tracking-tight"
+          >
+            Your AI-Powered <br className="hidden md:block" />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-500 to-blue-500">
+               Study Companion
+            </span>
+          </motion.h1>
+          
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-lg md:text-xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed"
+          >
+            Generate comprehensive study notes, intelligent exam blueprints, and tailored revision materials in seconds. Join a fast-growing community of smart learners.
+          </motion.p>
+          
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+          >
             {!isAuthenticated ? (
               <>
                 <Link
                   to="/login"
-                  className="px-8 py-4 bg-blue-600 text-white text-lg rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-lg font-semibold rounded-2xl hover:shadow-[0_8px_30px_rgb(59,130,246,0.3)] transition-all duration-300 flex items-center justify-center gap-2 transform hover:-translate-y-1"
                 >
                   Get Started Free
                   <ArrowRight size={20} />
                 </Link>
                 <Link
                   to="/login"
-                  className="px-8 py-4 bg-white text-blue-600 text-lg rounded-lg border-2 border-blue-600 hover:bg-blue-50 transition-colors"
+                  className="w-full sm:w-auto px-8 py-4 bg-white text-slate-700 text-lg font-semibold rounded-2xl border border-slate-200 shadow-sm hover:border-slate-300 hover:bg-slate-50 transition-all duration-300"
                 >
-                  Sign In
+                  View Demo
                 </Link>
               </>
             ) : (
               <Link
                 to="/dashboard"
-                className="px-8 py-4 bg-blue-600 text-white text-lg rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-lg font-semibold rounded-2xl hover:shadow-[0_8px_30px_rgb(59,130,246,0.3)] transition-all duration-300 flex items-center justify-center gap-2 transform hover:-translate-y-1"
               >
                 Go to Dashboard
-                <ArrowRight size={20} />
+                <Rocket size={20} />
               </Link>
             )}
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* Features */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
-        <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-10 sm:mb-12">
-          Everything You Need to Excel
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+      {/* Features Grid */}
+      <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-100px' }}
+          variants={fadeUpVariant}
+          className="text-center mb-16"
+        >
+          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+            Everything You Need to Excel
+          </h2>
+          <p className="text-slate-600 text-lg max-w-2xl mx-auto">
+            A comprehensive suite of tools designed mathematically to increase your retention and reduce study hours.
+          </p>
+        </motion.div>
+
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-50px' }}
+          variants={staggerContainer}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 xl:gap-8"
+        >
           {features.map((feature, index) => (
-            <div
+            <motion.div
               key={index}
-              className="bg-white/70 backdrop-blur-md border border-white/40 p-6 rounded-2xl shadow-md hover:shadow-xl hover:-translate-y-1 transition"
+              variants={fadeUpVariant}
+              whileHover={{ y: -8, transition: { duration: 0.2 } }}
+              className="bg-white/80 backdrop-blur-xl border border-white/40 p-8 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all"
             >
-              <div className="mb-4">{feature.icon}</div>
-              <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2">
+              <div className="mb-6 inline-flex p-3 bg-slate-50 rounded-2xl border border-slate-100">
+                {feature.icon}
+              </div>
+              <h3 className="text-xl font-bold text-slate-800 mb-3">
                 {feature.title}
               </h3>
-              <p className="text-gray-600 text-sm sm:text-base">
+              <p className="text-slate-600 leading-relaxed">
                 {feature.description}
               </p>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </section>
 
-      {/* Benefits */}
-      <section className="py-16 sm:py-20 bg-white/60 backdrop-blur-lg">
+      {/* Benefits / Workings */}
+      <section className="relative z-10 py-24 bg-white/40 backdrop-blur-2xl border-y border-white/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-12 items-center">
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
-                Why Choose UniPrep Copilot?
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            
+            <motion.div 
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={fadeUpVariant}
+            >
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6 leading-tight">
+                Why Top Students Choose <br /> 
+                <span className="text-blue-600">UniPrep Copilot</span>
               </h2>
-              <div className="space-y-4">
+              <p className="text-slate-600 text-lg mb-8">
+                Outperform the curve by leveraging the most advanced study strategies translated directly into a simple, automated application.
+              </p>
+              
+              <div className="space-y-5">
                 {benefits.map((benefit, index) => (
-                  <div key={index} className="flex items-start gap-3">
-                    <CheckCircle className="text-green-600 mt-1" size={22} />
-                    <p className="text-base sm:text-lg text-gray-700">
+                  <motion.div 
+                    key={index}
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1 }}
+                    className="flex items-center gap-4 bg-white/60 p-4 rounded-2xl border border-white hover:bg-white hover:shadow-sm transition-all"
+                  >
+                    <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-blue-100">
+                       <CheckCircle className="text-blue-600" size={18} />
+                    </div>
+                    <p className="font-medium text-slate-700">
                       {benefit}
                     </p>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
-            </div>
+            </motion.div>
 
-            <div className="bg-gradient-to-br from-blue-100 to-purple-100 p-6 sm:p-8 rounded-2xl">
-              <div className="bg-white/80 backdrop-blur-lg p-6 rounded-2xl shadow-lg">
-                <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              className="relative rounded-[2.5rem] bg-gradient-to-tr from-blue-100 via-indigo-50 to-purple-100 p-8 sm:p-12 shadow-[inset_0_2px_20px_rgba(255,255,255,0.8)]"
+            >
+              <div className="absolute inset-0 bg-white/40 backdrop-blur-sm rounded-[2.5rem]"></div>
+              
+              <div className="relative z-10 bg-white p-8 sm:p-10 rounded-[2rem] shadow-xl shadow-blue-900/5 border border-white">
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-blue-600 text-white mb-6 shadow-lg shadow-blue-500/30">
+                  <Rocket size={24} />
+                </div>
+                <h3 className="text-2xl font-bold text-slate-800 mb-8">
                   Get Started in 3 Steps
                 </h3>
-                <ol className="space-y-4">
+                
+                <ol className="space-y-6">
                   {[
-                    ['Create Your Account', 'Sign up with your email and university details'],
-                    ['Add Your Subjects', 'Set up your subjects and preferences'],
-                    ['Start Generating Content', 'Create notes and exam material instantly']
+                    ['Create Profile', 'Sign up safely with your academic details'],
+                    ['Connect Subjects', 'Define your exact subjects and syllabi patterns'],
+                    ['Generate & Learn', 'Create flawless notes and exam material instantly']
                   ].map((step, idx) => (
-                    <li key={idx} className="flex items-start gap-3">
-                      <span className="bg-blue-600 text-white rounded-full w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center font-bold">
-                        {idx + 1}
+                    <li key={idx} className="flex flex-col sm:flex-row gap-4 items-start sm:items-center p-4 rounded-2xl hover:bg-slate-50 transition-colors">
+                      <span className="flex-shrink-0 w-10 h-10 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center font-bold font-mono border border-slate-200 shadow-inner">
+                        0{idx + 1}
                       </span>
                       <div>
-                        <p className="font-semibold text-gray-800 text-sm sm:text-base">
+                        <p className="font-bold text-slate-800 text-lg">
                           {step[0]}
                         </p>
-                        <p className="text-gray-600 text-sm sm:text-base">
+                        <p className="text-slate-500">
                           {step[1]}
                         </p>
                       </div>
@@ -200,61 +315,48 @@ const Landing = () => {
                   ))}
                 </ol>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-        <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-blue-700 via-indigo-600 to-purple-700 shadow-2xl">
+      {/* Call to Action */}
+      <section className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+        <motion.div 
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="relative overflow-hidden rounded-[3rem] bg-slate-900 shadow-2xl"
+        >
+          {/* Animated Gradient Background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-indigo-900 to-slate-900 mix-blend-multiply" />
+          
+          <div className="absolute top-0 right-0 -translate-y-12 translate-x-12 w-64 h-64 bg-blue-500/30 rounded-full blur-[80px]" />
+          <div className="absolute bottom-0 left-0 translate-y-12 -translate-x-12 w-64 h-64 bg-purple-500/30 rounded-full blur-[80px]" />
 
-          {/* Animated Background Blobs - Scaled down slightly */}
-          <div className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 w-56 h-56 bg-white/10 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-0 right-0 translate-x-1/3 translate-y-1/3 w-80 h-80 bg-purple-500/30 rounded-full blur-3xl animate-pulse delay-700" />
-
-          {/* Grid Pattern Overlay */}
-          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 mix-blend-overlay"></div>
-
-          {/* Content Container - Reduced padding */}
-          <div className="relative z-10 px-6 sm:px-10 py-10 sm:py-14 text-center">
-
-            {/* Floating Icon - Slightly smaller margin */}
-            <div className="inline-flex items-center justify-center p-3 mb-5 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl shadow-inner transform transition-transform hover:scale-110 duration-300">
-              <Sparkles className="text-yellow-300" size={28} />
+          <div className="relative z-10 px-6 sm:px-12 py-16 sm:py-20 text-center flex flex-col items-center">
+            
+            <div className="inline-flex items-center justify-center p-4 mb-6 bg-white/10 backdrop-blur-md rounded-full border border-white/20">
+              <Sparkles className="text-yellow-400" size={32} />
             </div>
 
-            {/* Heading - Reduced text size */}
-            <h2 className="text-2xl sm:text-4xl font-bold mb-4 text-white tracking-tight leading-tight">
-              Ready to Transform <br className="hidden sm:block" />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-100 to-purple-200">
-                Your Studies?
-              </span>
+            <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white tracking-tight">
+              Ready to Transform Your <br className="hidden sm:block" /> Academic Journey?
             </h2>
 
-            {/* Paragraph - Reduced max-width and margin */}
-            <p className="text-base sm:text-lg mb-8 text-blue-100/90 max-w-lg mx-auto leading-relaxed">
-              Join thousands of students who are already using UniPrep Copilot to save time, reduce stress, and score higher.
+            <p className="text-lg mb-10 text-blue-100/80 max-w-xl text-center leading-relaxed">
+              Join thousands of students globally who are securing higher grades with a fraction of the traditional effort. Get your AI Copilot today.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Link
-                to={isAuthenticated ? '/dashboard' : '/login'}
-                className="group relative inline-flex items-center gap-2 px-8 py-3 bg-white text-blue-700 text-base font-bold rounded-xl shadow-lg hover:shadow-blue-500/30 transition-all duration-300 transform hover:-translate-y-1 overflow-hidden"
-              >
-                {/* Button Shine Effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
-
-                <span>{isAuthenticated ? 'Go to Dashboard' : 'Get Started Free'}</span>
-                <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
-              </Link>
-            </div>
-
-            <p className="mt-5 text-xs sm:text-sm text-blue-200/60 font-medium">
-              No credit card required • Free plan available
-            </p>
+            <Link
+              to={isAuthenticated ? '/dashboard' : '/login'}
+              className="group relative inline-flex items-center justify-center gap-3 px-10 py-4 bg-white text-slate-900 text-lg font-bold rounded-full shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:shadow-[0_0_60px_rgba(255,255,255,0.5)] transition-all duration-300 transform hover:-translate-y-1"
+            >
+              <span>{isAuthenticated ? 'Go to Dashboard' : 'Start For Free'}</span>
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </Link>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* Footer */}

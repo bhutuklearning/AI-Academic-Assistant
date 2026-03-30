@@ -9,7 +9,8 @@ const formatUser = (user) => ({
   university: user.university,
   college: user.college,
   branch: user.branch,
-  semester: user.semester
+  semester: user.semester,
+  role: user.role
 });
 
 const issueTokens = async (user) => {
