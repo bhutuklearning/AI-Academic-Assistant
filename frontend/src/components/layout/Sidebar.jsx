@@ -21,11 +21,9 @@ const Sidebar = ({ onClose, isCollapsed, onToggleCollapse }) => {
     navItems.push({ path: '/admin', icon: ShieldAlert, label: 'Admin Panel' });
   }
 
-  // Close mobile sidebar on route change (but not on initial mount)
   const prevPathnameRef = useRef(location.pathname);
   useEffect(() => {
     if (onClose && prevPathnameRef.current !== location.pathname) {
-      // Only close if pathname actually changed
       prevPathnameRef.current = location.pathname;
       const timer = setTimeout(() => {
         onClose();
@@ -36,15 +34,12 @@ const Sidebar = ({ onClose, isCollapsed, onToggleCollapse }) => {
     }
   }, [location.pathname, onClose]);
 
-  // Handle keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e) => {
-      // Close on Escape key
       if (e.key === 'Escape' && onClose) {
         onClose();
       }
       
-      // Focus management for keyboard navigation
       if (e.key === 'Tab' && sidebarRef.current) {
         const focusableElements = sidebarRef.current.querySelectorAll(
           'a, button, [tabindex]:not([tabindex="-1"])'
@@ -66,11 +61,8 @@ const Sidebar = ({ onClose, isCollapsed, onToggleCollapse }) => {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
 
-  // Handle link click for mobile
-  const handleLinkClick = (e) => {
-    // Don't prevent default - let navigation happen
+  const handleLinkClick = (e, path) => {
     if (onClose) {
-      // Close sidebar after a small delay to allow navigation
       setTimeout(() => {
         onClose();
       }, 150);
@@ -87,23 +79,23 @@ const Sidebar = ({ onClose, isCollapsed, onToggleCollapse }) => {
   return (
     <aside
       ref={sidebarRef}
-      className={`bg-white shadow-sm transition-all duration-300 ease-in-out ${
+      className={`bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl transition-all duration-300 ease-in-out ${
         isCollapsed 
-          ? 'w-16' 
-          : 'w-64'
+          ? 'w-16 sm:w-20' 
+          : 'w-64 sm:w-72'
       } ${
         onClose 
           ? 'h-full' 
-          : 'sticky top-14 sm:top-16 h-[calc(100vh-3.5rem)] sm:h-[calc(100vh-4rem)]'
+          : 'sticky top-[3.5rem] sm:top-[4rem] lg:top-[5rem] h-[calc(100vh-3.5rem)] sm:h-[calc(100vh-4rem)] lg:h-[calc(100vh-5rem)]'
       } overflow-hidden flex flex-col`}
     >
       {/* Desktop Toggle Button */}
       {!onClose && (
-        <div className="flex justify-end p-2 border-b">
+        <div className="flex justify-end p-3 border-b border-slate-200/50 dark:border-slate-800/50 hidden md:flex">
           <button
             onClick={onToggleCollapse}
             aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-            className="p-1.5 rounded-md text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+            className="p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-200 transition-colors"
             title={isCollapsed ? "Expand" : "Collapse"}
           >
             {isCollapsed ? (
@@ -115,8 +107,27 @@ const Sidebar = ({ onClose, isCollapsed, onToggleCollapse }) => {
         </div>
       )}
 
-      <nav className="flex-1 overflow-y-auto overflow-x-hidden p-3 sm:p-4">
-        <ul className="space-y-1.5 sm:space-y-2">
+      {/* Mobile close button and hint */}
+      {onClose && (
+        <div className="p-4 border-b border-slate-200/50 dark:border-slate-800/50 flex items-center justify-between sticky top-0 z-10">
+          <span className="text-sm font-extrabold text-slate-800 dark:text-slate-200 uppercase tracking-widest">Menu</span>
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              if (onClose) onClose();
+            }}
+            className="p-2 rounded-xl text-slate-500 hover:bg-rose-100 hover:text-rose-600 dark:hover:bg-rose-900/40 dark:hover:text-rose-400 transition-colors"
+            aria-label="Close menu"
+            type="button"
+          >
+            <X size={20} />
+          </button>
+        </div>
+      )}
+
+      <nav className="flex-1 overflow-y-auto overflow-x-hidden p-3 sm:p-5 scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-700">
+        <ul className="space-y-2">
           {navItems.map((item, index) => {
             const Icon = item.icon;
             const isActive = getActiveState(item.path);
@@ -127,28 +138,29 @@ const Sidebar = ({ onClose, isCollapsed, onToggleCollapse }) => {
                   ref={index === 0 ? firstLinkRef : null}
                   to={item.path}
                   onClick={(e) => handleLinkClick(e, item.path)}
-                  className={`group flex items-center gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg transition-all duration-200 ${
+                  className={`group flex items-center gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl transition-all duration-300 ${
                     isActive
-                      ? 'bg-blue-50 text-blue-600 font-medium shadow-sm'
-                      : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                      ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 font-bold shadow-sm border border-blue-100 dark:border-blue-800/50'
+                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200 border border-transparent'
                   } ${
-                    isCollapsed ? 'justify-center' : ''
-                  } focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
+                    isCollapsed ? 'justify-center border-none !px-2' : ''
+                  } focus:outline-none focus:ring-2 focus:ring-blue-500/30`}
                   title={isCollapsed ? item.label : undefined}
                 >
                   <Icon 
-                    size={20} 
-                    className={`flex-shrink-0 ${
-                      isActive ? 'text-blue-600' : 'text-gray-600 group-hover:text-gray-900'
+                    size={22} 
+                    strokeWidth={isActive ? 2.5 : 2}
+                    className={`flex-shrink-0 transition-colors ${
+                      isActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-500 group-hover:text-blue-500 dark:group-hover:text-blue-400'
                     }`} 
                   />
                   {!isCollapsed && (
-                    <span className="text-sm sm:text-base whitespace-nowrap truncate">
+                    <span className="text-sm sm:text-base whitespace-nowrap truncate tracking-wide">
                       {item.label}
                     </span>
                   )}
                   {isActive && !isCollapsed && (
-                    <span className="ml-auto w-1.5 h-1.5 bg-blue-600 rounded-full"></span>
+                    <span className="ml-auto w-1.5 h-1.5 bg-blue-600 dark:bg-blue-400 rounded-full shadow-[0_0_8px_rgba(37,99,235,0.8)]"></span>
                   )}
                 </Link>
               </li>
@@ -157,32 +169,13 @@ const Sidebar = ({ onClose, isCollapsed, onToggleCollapse }) => {
         </ul>
       </nav>
 
-      {/* Mobile close button and hint */}
       {onClose && (
-        <>
-          <div className="p-3 border-b flex items-center justify-between bg-white sticky top-0 z-10">
-            <span className="text-sm font-semibold text-gray-800">Menu</span>
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                if (onClose) onClose();
-              }}
-              className="p-1.5 rounded-md text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
-              aria-label="Close menu"
-              type="button"
-            >
-              <X size={20} />
-            </button>
-          </div>
-          <div className="p-4 border-t text-xs text-gray-500 text-center mt-auto">
-            Tap outside to close
-          </div>
-        </>
+        <div className="p-4 border-t border-slate-200/50 dark:border-slate-800/50 text-xs font-medium text-slate-400 dark:text-slate-500 text-center mt-auto">
+          Tap outside to close
+        </div>
       )}
     </aside>
   );
 };
 
 export default Sidebar;
-
