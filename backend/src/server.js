@@ -5,6 +5,7 @@ dotenv.config();
 import express from 'express';
 import cors from 'cors';
 import axios from 'axios';
+import multer from 'multer';
 import rateLimit from "express-rate-limit";
 import authRoutes from './routes/auth.js';
 import userRoutes from './routes/users.js';
@@ -149,7 +150,19 @@ function pingServer() {
 // Ping every 10 minutes (600,000 milliseconds)
 setInterval(pingServer, 600000);
 
-// Error handling middleware
+// Multer error handling (file type / size rejections)
+app.use((err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    const status = err.code === 'LIMIT_FILE_SIZE' ? 413 : 400;
+    return res.status(status).json({
+      error: 'File upload error',
+      message: err.message || err.code,
+    });
+  }
+  next(err);
+});
+
+// Generic error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(err.status || 500).json({
