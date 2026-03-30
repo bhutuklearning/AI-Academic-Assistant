@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ShieldAlert, BookOpen, Eye, EyeOff, Zap } from 'lucide-react';
+import { BookOpen, Eye, EyeOff } from 'lucide-react';
 import useAuthStore from '../store/authStore';
 
 const Login = () => {
@@ -18,7 +18,6 @@ const Login = () => {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [adminLoading, setAdminLoading] = useState(false);
 
   const { login, register } = useAuthStore();
   const navigate = useNavigate();
@@ -50,23 +49,6 @@ const Login = () => {
     }
   };
 
-  // Quick Admin Login
-  const handleAdminLogin = async () => {
-    setAdminLoading(true);
-    setError('');
-    try {
-      const result = await login('avoy123@gmail.com', 'avoy123@gmail.com');
-      if (result.success) {
-        navigate('/admin');
-      } else {
-        setError(result.error || 'Admin login failed. Make sure the backend is running.');
-      }
-    } catch {
-      setError('Admin login failed. Please try again.');
-    } finally {
-      setAdminLoading(false);
-    }
-  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 px-4 relative overflow-hidden">
@@ -181,32 +163,6 @@ const Login = () => {
             </motion.button>
           </form>
 
-          {/* Divider */}
-          {isLogin && (
-            <>
-              <div className="my-5 flex items-center gap-3">
-                <div className="flex-1 h-px bg-white/10" />
-                <span className="text-xs text-slate-400 font-medium">OR</span>
-                <div className="flex-1 h-px bg-white/10" />
-              </div>
-
-              {/* ⭐ Admin Quick Login Button */}
-              <motion.button
-                onClick={handleAdminLogin}
-                disabled={adminLoading}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="w-full flex items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-700 py-3 font-semibold text-white transition-all hover:from-purple-500 hover:to-indigo-600 disabled:opacity-50 shadow-lg shadow-purple-900/40 border border-purple-400/20"
-              >
-                <ShieldAlert size={18} />
-                {adminLoading ? 'Logging in as Admin…' : 'Login as Admin'}
-                {!adminLoading && <Zap size={14} className="text-yellow-300" />}
-              </motion.button>
-              <p className="text-[11px] text-slate-500 text-center mt-2">
-                Quick access for administrators only
-              </p>
-            </>
-          )}
 
           {/* Toggle */}
           <p className="mt-6 text-center text-sm text-slate-400">
