@@ -1,169 +1,300 @@
 # Backend
 
-Backend API for UniPrep Copilot. Implements authentication, subject/context management, AI-powered content generation, exam planning, quizzes, study sessions, and community features.
+The backend is a RESTful API server that powers the UniPrep Copilot academic assistant platform. It handles authentication, AI-driven content generation, file management, community features, and all core business logic for the application.
 
-## Tech Stack
+---
 
-- Node.js, Express.js
-- MongoDB via Mongoose
-- JWT auth (access + refresh tokens)
-- Multer (file uploads), CORS
-- OpenRouter SDK (LLM orchestration)
+## Technology Stack
 
-## Quick Start
+| Layer | Technology |
+|---|---|
+| Runtime | Node.js v22+ |
+| Framework | Express.js v5 |
+| Database | MongoDB via Mongoose |
+| AI Orchestration | OpenRouter (Google Gemini, etc.) |
+| File Storage | Cloudinary |
+| File Handling | Multer + Sharp (image compression) |
+| Authentication | JWT — Access Token + Refresh Token |
+| Rate Limiting | express-rate-limit |
+| Process Manager | Nodemon (development) |
 
-- Create `backend/.env` from `.env.sample`
-- Install and run:
+---
 
-```bash
-cd backend
-npm install
-npm run dev
+## Project Structure
+
+```
+backend/
+├── src/
+│   ├── config/
+│   │   ├── cloudinaryConfig.js    # Multer setup, MIME whitelist, per-type size limits
+│   │   └── db.js                  # MongoDB connection
+│   ├── controllers/
+│   │   ├── authController.js      # Register, login, refresh token
+│   │   ├── cloudinary.js          # Upload, delete, compress (sharp)
+│   │   ├── communityController.js # Posts, comments, votes, clone, report
+│   │   ├── contentController.js   # AI notes, reports, PPT generation
+│   │   ├── contextController.js   # Subject context / document ingestion
+│   │   ├── examController.js      # Blueprints, planners, mock papers
+│   │   ├── quizController.js      # Quiz creation, attempts, analytics
+│   │   ├── sessionController.js   # Study session tracking
+│   │   ├── styleController.js     # Output style management
+│   │   ├── subjectController.js   # Subject CRUD
+│   │   └── userController.js      # Profile, progress, recent content
+│   ├── middleware/
+│   │   └── auth.js                # JWT access + refresh token middleware
+│   ├── models/                    # Mongoose schemas
+│   ├── routes/                    # Express routers (one per domain)
+│   ├── services/
+│   │   └── aiOrchestrator.js      # OpenRouter API integration
+│   ├── utils/                     # Shared helper utilities
+│   └── server.js                  # Express app entry point
+├── .env                           # Environment configuration (not committed)
+├── .env.sample                    # Environment variable template
+└── package.json
 ```
 
-- Default server: `http://localhost:5000`
+---
 
-## Environment Variables
+## Getting Started
 
-- `PORT` — server port (default `5000`)
-- `NODE_ENV` — `development` | `production`
-- `MONGO_URI` — MongoDB connection string
-- `JWT_SECRET` — access token secret
-- `JWT_REFRESH_SECRET` — refresh token secret
-- `JWT_ACCESS_EXPIRES_IN` — access token TTL (e.g., `15m`)
-- `JWT_REFRESH_EXPIRES_IN` — refresh token TTL (e.g., `7d`)
-- `OPENROUTER_API_KEY` — OpenRouter API key
-- `OPENROUTER_MODEL` — model id (default `openai/gpt-oss-20b:free`)
-- `CLIENT_URL` — comma-separated allowed origins for CORS (e.g., `http://localhost:3000`)
-- `BACKEND_URL` — backend base URL used for periodic ping
+### Prerequisites
 
-## Commands
+- Node.js v18 or higher
+- A running MongoDB instance (local or Atlas)
+- A Cloudinary account
+- An OpenRouter API key
 
-- `npm run dev` — start with nodemon
-- `npm start` — start without nodemon
+### Installation
 
-## Routes
+```bash
+# From the project root
+cd backend
+npm install
+```
 
-- Base health:
+### Environment Configuration
 
-  - `GET /` — welcome
-  - `GET /api/health` — health check
-  - `GET /api/test-ai-key` — OpenRouter key diagnostics
-  - `GET /ping` — keep-alive endpoint
+Copy the sample file and fill in all required values:
 
-- Auth (`/api/auth`)
+```bash
+cp .env.sample .env
+```
 
-  - `POST /register` — create account
-  - `POST /login` — returns access + refresh tokens
-  - `POST /refresh` — refresh tokens
-  - `GET /me` — current user (requires `Authorization: Bearer <accessToken>`)
+| Variable | Description | Required |
+|---|---|---|
+| `PORT` | Port the server listens on | No (default: 8000) |
+| `NODE_ENV` | `development` or `production` | Yes |
+| `MONGO_URI` | MongoDB connection string | Yes |
+| `JWT_SECRET` | Secret for signing access tokens | Yes |
+| `JWT_REFRESH_SECRET` | Secret for signing refresh tokens | Yes |
+| `JWT_ACCESS_EXPIRES_IN` | Access token TTL (e.g. `15m`) | No (default: 15m) |
+| `JWT_REFRESH_EXPIRES_IN` | Refresh token TTL (e.g. `7d`) | No (default: 7d) |
+| `OPENROUTER_API_KEY` | OpenRouter API key for AI calls | Yes |
+| `OPENROUTER_MODEL` | Model identifier (e.g. `google/gemini-3-flash-preview`) | Yes |
+| `CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name | Yes |
+| `CLOUDINARY_API_KEY` | Cloudinary API key | Yes |
+| `CLOUDINARY_API_SECRET` | Cloudinary API secret | Yes |
+| `BACKEND_URL` | Public URL of this server (used for self-ping) | Yes |
+| `FRONTEND_URL` | Allowed CORS origin for the frontend | Yes |
 
-- Users (`/api/users`)
+### Running the Server
 
-  - `GET /profile` — get profile
-  - `PUT /profile` — update profile
-  - `GET /progress` — progress overview
-  - `GET /recent-content` — recent generated items
+```bash
+# Development (with hot reload via nodemon)
+npm run dev
 
-- Subjects (`/api/subjects`)
+# Production
+npm start
+```
 
-  - `GET /` — list
-  - `GET /:id` — detail
-  - `POST /` — create
-  - `PUT /:id` — update
-  - `DELETE /:id` — delete
+The server starts at `http://localhost:<PORT>` (default: 7000).
 
-- Context (`/api/context`)
+---
 
-  - `GET /:subjectId` — list for subject
-  - `GET /:subjectId/search` — search within subject context
-  - `POST /` — upload context (`multipart/form-data` + `file`)
-  - `PUT /:id` — update
-  - `DELETE /:id` — delete
+## API Reference
 
-- Styles (`/api/styles`)
+All routes are prefixed with `/api`. Protected routes require a `Bearer` token in the `Authorization` header.
 
-  - `GET /` — user styles
-  - `GET /defaults` — default presets
-  - `POST /` — create
-  - `PUT /:id` — update
-  - `DELETE /:id` — delete
-  - `PUT /:id/activate` — set active style
+### Authentication — `/api/auth`
 
-- Content (`/api/content`)
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| POST | `/register` | No | Register a new user account |
+| POST | `/login` | No | Login and receive access + refresh tokens |
+| POST | `/refresh` | Refresh token | Exchange a refresh token for a new access token |
+| GET | `/me` | Yes | Get the currently authenticated user |
 
-  - `GET /item/:id` — content item by id
-  - `GET /:subjectId` — list generated content for subject
-  - `POST /notes` — generate study notes
-  - `POST /report` — generate academic report
-  - `POST /ppt` — generate presentation content
-  - `PUT /:id` — update
-  - `DELETE /:id` — delete
+### Users — `/api/users`
 
-- Exam (`/api/exam`)
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| GET | `/profile` | Yes | Get user profile |
+| PUT | `/profile` | Yes | Update user profile |
+| GET | `/progress` | Yes | Get learning progress statistics |
+| GET | `/recent-content` | Yes | Get recently accessed content |
 
-  - `POST /blueprint` — exam blueprint
-  - `POST /planner` — revision planner
-  - `POST /rapid-sheets` — rapid revision sheets
-  - `POST /mock-paper` — mock paper
-  - `GET /plans/:subjectId` — saved plans by subject
+### Subjects — `/api/subjects`
 
-- Quiz (`/api/quiz`)
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| GET | `/` | Yes | List all subjects for the user |
+| GET | `/:id` | Yes | Get a specific subject |
+| POST | `/` | Yes | Create a new subject |
+| PUT | `/:id` | Yes | Update a subject |
+| DELETE | `/:id` | Yes | Delete a subject |
 
-  - `GET /:subjectId` — list quizzes
-  - `POST /` — create quiz
-  - `POST /attempt` — submit attempt
-  - `GET /analytics/:subjectId` — analytics
+### Content (AI Generation) — `/api/content`
 
-- Sessions (`/api/sessions`)
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| GET | `/:subjectId` | Yes | Get all content for a subject |
+| GET | `/item/:id` | Yes | Get a specific content item |
+| POST | `/notes` | Yes | Generate AI-powered study notes |
+| POST | `/report` | Yes | Generate an AI-powered report |
+| POST | `/ppt` | Yes | Generate AI-powered presentation content |
+| PUT | `/:id` | Yes | Update a content item |
+| DELETE | `/:id` | Yes | Delete a content item |
 
-  - `POST /start` — start focus session
-  - `PUT /:id/end` — end session
-  - `GET /` — list sessions
+### Context (Document Ingestion) — `/api/context`
 
-- Community (`/api/community`)
-  - `GET /posts` — list posts
-  - `GET /posts/:id` — post details
-  - `POST /posts` — create (supports `file` upload)
-  - `POST /posts/:id/vote` — up/down vote
-  - `POST /posts/:id/comment` — add comment
-  - `GET /posts/:id/comments` — list comments
-  - `POST /posts/:id/clone` — clone into workspace
-  - `POST /posts/:id/report` — report post
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| GET | `/:subjectId` | Yes | Get all context documents for a subject |
+| GET | `/:subjectId/search` | Yes | Search within context documents |
+| POST | `/` | Yes | Upload a document to add as context (multipart) |
+| PUT | `/:id` | Yes | Update a context entry |
+| DELETE | `/:id` | Yes | Delete a context entry |
 
-## Auth
+### Exam Tools — `/api/exam`
 
-- Access token in `Authorization: Bearer <token>`
-- Refresh token via `POST /api/auth/refresh` with `refreshToken`
-- Expiry defaults: access `15m`, refresh `7d`
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| POST | `/blueprint` | Yes | Generate an exam blueprint |
+| POST | `/planner` | Yes | Generate a revision planner |
+| POST | `/rapid-sheets` | Yes | Generate rapid revision sheets |
+| POST | `/mock-paper` | Yes | Generate a mock exam paper |
+| GET | `/plans/:subjectId` | Yes | Get saved exam plans for a subject |
 
-## Data Models
+### Quiz — `/api/quiz`
 
-- `User` — account and profile
-- `Subject` — subject metadata
-- `Context` — uploaded syllabus/notes/PYQs
-- `GeneratedContent` — notes/report/ppt metadata
-- `AnswerStyle` — personalized style presets
-- `ExamPlan` — blueprint/planner/sheets/mock paper
-- `Quiz`, `QuizAttempt` — quizzes and attempts
-- `Session` — focus-mode sessions
-- `CommunityPost`, `CommunityComment`, `CommunityVote` — community entities
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| GET | `/:subjectId` | Yes | Get all quizzes for a subject |
+| POST | `/` | Yes | Create a new quiz |
+| POST | `/attempt` | Yes | Submit a quiz attempt |
+| GET | `/analytics/:subjectId` | Yes | Get quiz analytics for a subject |
 
-## AI Orchestration
+### Study Sessions — `/api/sessions`
 
-- OpenRouter SDK with streaming responses
-- Functions: notes, report, ppt, exam blueprint/planner/sheets/mock paper
-- Diagnostic endpoint `GET /api/test-ai-key` verifies key and reports common issues
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| GET | `/` | Yes | Get all study sessions for the user |
+| POST | `/start` | Yes | Start a new study session |
+| PUT | `/:id/end` | Yes | End an active study session |
 
-## Development Notes
+### Output Styles — `/api/styles`
 
-- CORS: `CLIENT_URL` controls allowed origins
-- File uploads: in-memory via Multer
-- Error handling: final middleware returns JSON with `message` and `stack` in development
-- Logging: enable as needed; `morgan` is available in dependencies
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| GET | `/` | Yes | Get user-created styles |
+| GET | `/defaults` | Yes | Get system default styles |
+| POST | `/` | Yes | Create a custom style |
+| PUT | `/:id` | Yes | Update a style |
+| DELETE | `/:id` | Yes | Delete a style |
+| PUT | `/:id/activate` | Yes | Set a style as active |
+
+### Community — `/api/community`
+
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| GET | `/posts` | No | List all community posts |
+| GET | `/posts/:id` | No | Get a specific post |
+| POST | `/posts` | Yes | Create a community post (multipart) |
+| POST | `/posts/:id/vote` | Yes | Upvote or downvote a post |
+| POST | `/posts/:id/comment` | Yes | Comment on a post |
+| GET | `/posts/:id/comments` | No | Get all comments for a post |
+| POST | `/posts/:id/clone` | Yes | Clone a post to your own subjects |
+| POST | `/posts/:id/report` | Yes | Report a post |
+| DELETE | `/posts/:id` | Yes | Delete a post |
+
+### File Upload — `/api/cloudinary`
+
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| GET | `/config` | No | Check Cloudinary configuration status |
+| POST | `/upload` | Yes | Upload a single file |
+| POST | `/upload-multiple` | Yes | Upload multiple files (max 10) |
+| DELETE | `/delete/:public_id` | Yes | Delete a file by its Cloudinary public ID |
+
+### System
+
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| GET | `/` | No | API welcome message |
+| GET | `/api/health` | No | Health check |
+| GET | `/ping` | No | Server keep-alive ping endpoint |
+| GET | `/api/test-ai-key` | No | Test and diagnose the OpenRouter API key |
+
+---
+
+## File Upload Limits
+
+Files are validated by MIME type before reaching the controller. Unsupported types are rejected immediately with a `400` error.
+
+| File Type | Allowed Extensions | Size Limit |
+|---|---|---|
+| Images | `.jpg` `.png` `.gif` `.webp` `.svg` | 5 MB |
+| PDF | `.pdf` | 20 MB |
+| Video | `.mp4` `.mov` `.avi` `.mkv` `.webm` | 100 MB |
+| Audio | `.mp3` `.wav` `.ogg` `.aac` `.flac` | 25 MB |
+| Documents | `.docx` `.pptx` `.xlsx` `.txt` `.csv` | 10 MB |
+
+### Image Compression
+
+All uploaded images (except SVG) are automatically compressed on the server using **Sharp** before being sent to Cloudinary:
+
+- Converted to **WebP** format at 82% quality
+- Resized to a maximum of **2048 x 2048** pixels (aspect ratio preserved, never upscaled)
+- Typically reduces file size by **40 to 60%** with no visible quality loss
+
+Cloudinary is also configured with `quality: auto` and `fetch_format: auto` to adaptively serve the optimal format and quality to each client.
+
+---
+
+## Authentication Model
+
+The API uses a dual-token authentication strategy:
+
+- **Access Token** — Short-lived (default 15 minutes). Sent in the `Authorization: Bearer <token>` header on every protected request.
+- **Refresh Token** — Long-lived (default 7 days). Used exclusively at `POST /api/auth/refresh` to obtain a new access token. Never sent on regular API calls.
+
+---
+
+## Rate Limiting
+
+All `/api/*` routes are rate-limited to **70 requests per minute** per IP address. Requests that exceed this limit receive a `429 Too Many Requests` response.
+
+---
+
+## Error Response Format
+
+All error responses follow a consistent JSON structure:
+
+```json
+{
+  "error": "Short error identifier",
+  "message": "Human-readable description of the error"
+}
+```
+
+File size and type errors return `400` or `413` with this same structure, including the specific filename and limit that was breached.
+
+---
 
 ## Deployment
 
-- Set `MONGO_URI`, JWT secrets, `OPENROUTER_API_KEY`
-- Set `CLIENT_URL` to your frontend origins
-- Use `PORT` as required by your platform
+The server is designed for deployment on platforms such as **Render**. Key production considerations:
+
+- Set `NODE_ENV=production` to suppress development-only logging.
+- Set `FRONTEND_URL` to your deployed frontend origin for correct CORS configuration. All `*.vercel.app` origins are also automatically allowed.
+- The server includes a self-ping mechanism (every 10 minutes) using the `BACKEND_URL` environment variable to prevent the instance from sleeping on free-tier hosting plans.
