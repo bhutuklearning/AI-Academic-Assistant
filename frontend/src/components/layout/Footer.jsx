@@ -19,7 +19,7 @@ const Footer = () => {
             </p>
             <div className="flex space-x-4">
               <a 
-                href="https://github.com/Avoy-Sasmal/UniPrep" 
+                href="https://github.com/bhutuklearning/AI-Academic-Assistant" 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="text-gray-400 hover:text-white transition-colors"
@@ -116,7 +116,7 @@ const Footer = () => {
               </a>
               . Want to make this project better or advance its features?{' '}
               <a 
-                href="https://github.com/Avoy-Sasmal/UniPrep" 
+                href="https://github.com/bhutuklearning/AI-Academic-Assistant" 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="text-blue-400 hover:text-white transition-colors font-bold"
