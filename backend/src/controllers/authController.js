@@ -13,15 +13,20 @@ const formatUser = (user) => ({
   role: user.role
 });
 
-const issueTokens = async (user) => {
+const issueTokens = async (userId, isNewUser = false) => {
   try {
     // Validate JWT secrets are available
     if (!process.env.JWT_SECRET || !process.env.JWT_REFRESH_SECRET) {
       throw new Error('JWT secrets are not configured. Please check your .env file.');
     }
-    const tokens = generateTokens({ userId: user._id });
-    user.refreshToken = tokens.refreshToken;
-    await user.save();
+    const tokens = generateTokens({ userId });
+    
+    // Only perform an atomic update if it's an existing user.
+    // New users will save their token during their initial creation to prevent double-writes.
+    if (!isNewUser) {
+      await User.updateOne({ _id: userId }, { $set: { refreshToken: tokens.refreshToken } });
+    }
+    
     return tokens;
   } catch (error) {
     console.error('Token generation error:', error);
@@ -39,6 +44,8 @@ export const registerUser = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    
+    // Create new user object first
     const user = new User({
       email,
       password: hashedPassword,
@@ -49,8 +56,12 @@ export const registerUser = async (req, res) => {
       semester
     });
 
+    // Generate tokens BEFORE saving to eliminate redundant database writes
+    const tokens = await issueTokens(user._id, true);
+    user.refreshToken = tokens.refreshToken;
+
+    // Perform a SINGLE database write to dramatically improve signup speed
     await user.save();
-    const tokens = await issueTokens(user);
 
     res.status(201).json({
       accessToken: tokens.accessToken,
@@ -77,7 +88,9 @@ export const loginUser = async (req, res) => {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    const tokens = await issueTokens(user);
+    // Atomic update bypasses heavy Mongoose document lifecycle for faster logins
+    const tokens = await issueTokens(user._id, false);
+    user.refreshToken = tokens.refreshToken;
 
     res.json({
       accessToken: tokens.accessToken,
@@ -113,7 +126,7 @@ export const refreshAccessToken = async (req, res) => {
       return res.status(403).json({ message: 'Refresh token mismatch' });
     }
 
-    const tokens = await issueTokens(user);
+    const tokens = await issueTokens(user._id, false);
     res.json({
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken
