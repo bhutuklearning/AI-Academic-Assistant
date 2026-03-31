@@ -372,7 +372,7 @@ Contributions are welcome. Please follow the process below:
 
 ## License
 
-This project was developed as part of a hackathon. Contact the repository owner for licensing details.
+This project is MIT Licensed.
 
 ---
 

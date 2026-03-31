@@ -65,7 +65,7 @@ const Dashboard = () => {
       className="space-y-6 sm:space-y-8 w-full overflow-x-hidden pb-8"
     >
       <motion.div variants={itemVariants} className="flex items-center justify-between px-1">
-        <h1 className="text-3xl sm:text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-900 to-slate-800 tracking-tight">
+        <h1 className="text-4xl sm:text-5xl font-black bg-clip-text text-transparent bg-gradient-to-br from-indigo-700 via-blue-700 to-slate-800 dark:from-indigo-400 dark:via-blue-400 dark:to-white tracking-tighter pb-1 drop-shadow-sm">
           Dashboard
         </h1>
         <div className="hidden sm:flex items-center gap-2 text-sm font-medium text-slate-500 dark:text-slate-400 bg-white px-4 py-2 rounded-full shadow-sm border border-slate-100 dark:border-slate-700">
@@ -174,10 +174,10 @@ const Dashboard = () => {
                     </p>
                   </div>
                   <div className="flex items-center gap-3 text-xs text-slate-400 font-medium ml-1">
-                    <span className="bg-white px-2 py-1 rounded-md shadow-sm border border-slate-100 dark:border-slate-700 hidden sm:block">
+                    <span className="bg-white dark:bg-slate-700 px-2 py-1 rounded-md shadow-sm border border-slate-100 dark:border-slate-600 hidden sm:block">
                       {new Date(content.createdAt).toLocaleDateString()}
                     </span>
-                    <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all duration-300">
+                    <div className="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all duration-300">
                       <ChevronRight size={16} strokeWidth={3} />
                     </div>
                   </div>
@@ -186,9 +186,9 @@ const Dashboard = () => {
             </div>
           ) : (
              <div className="flex flex-col items-center justify-center p-8 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-dashed border-slate-300 dark:border-slate-600 text-center">
-                <FileText className="text-slate-300 mb-3" size={32} />
+                <FileText className="text-slate-300 dark:text-slate-600 mb-3" size={32} />
                 <p className="text-slate-500 dark:text-slate-400 font-medium">No content generated yet.</p>
-                <p className="text-xs text-slate-400 mt-1">Visit your subjects to get started!</p>
+                <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Visit your subjects to get started!</p>
              </div>
           )}
         </motion.div>
@@ -207,19 +207,19 @@ const Dashboard = () => {
               {recentSessions.map((session) => (
                 <div key={session._id} className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/70 border border-slate-100 dark:border-slate-700 rounded-2xl hover:bg-white dark:hover:bg-slate-800 hover:shadow-sm transition-all gap-4">
                   <div className="min-w-0 flex-1">
-                    <p className="font-bold text-slate-800 text-sm sm:text-base truncate mb-1">
+                    <p className="font-bold text-slate-800 dark:text-slate-100 text-sm sm:text-base truncate mb-1">
                       {session.subjectId?.name || session.contentId?.title || 'Unknown Subject'}
                     </p>
                     <div className="flex items-center gap-2">
                        <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-                       <p className="text-xs sm:text-sm text-slate-500 font-medium">
+                       <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium">
                          {new Date(session.startTime).toLocaleDateString()} • {session.mode}
                        </p>
                     </div>
                   </div>
-                  <div className="px-3 py-1.5 bg-white rounded-lg border border-slate-100 text-xs sm:text-sm font-bold text-slate-700 shadow-sm whitespace-nowrap">
+                  <div className="px-3 py-1.5 bg-white dark:bg-slate-700 rounded-lg border border-slate-100 dark:border-slate-600 text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200 shadow-sm whitespace-nowrap">
                     {session.duration ? `${Math.round(session.duration / 60000)} min` : (
-                      <span className="text-amber-600 animate-pulse">Ongoing</span>
+                      <span className="text-amber-600 dark:text-amber-400 animate-pulse">Ongoing</span>
                     )}
                   </div>
                 </div>

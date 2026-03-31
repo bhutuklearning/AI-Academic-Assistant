@@ -74,7 +74,7 @@ const Subjects = () => {
       className="space-y-6 sm:space-y-8 pb-8"
     >
       <motion.div variants={itemVariants} className="flex justify-between items-center px-1">
-        <h1 className="text-3xl sm:text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-900 to-slate-800 tracking-tight">
+        <h1 className="text-4xl sm:text-5xl font-black bg-clip-text text-transparent bg-gradient-to-br from-indigo-700 via-blue-700 to-slate-800 dark:from-indigo-400 dark:via-blue-400 dark:to-white tracking-tighter pb-1 drop-shadow-sm">
           Subjects
         </h1>
         <button
