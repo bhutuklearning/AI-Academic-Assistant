@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Upload, FileText, X, Cloud, Loader2, Eye, Download, Share2 } from 'lucide-react';
 import api from '../../services/api';
 import { useNavigate } from 'react-router-dom';
@@ -185,45 +186,46 @@ const ContextManager = ({ subjectId }) => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-semibold">Context Management</h2>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 px-1">
+        <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-slate-100 tracking-tight">Context Management</h2>
         <button
           onClick={() => setShowModal(true)}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2"
+          className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-5 py-2.5 rounded-xl hover:shadow-lg hover:shadow-blue-500/30 flex items-center gap-2 font-bold transition-all hover:-translate-y-0.5 w-full sm:w-auto justify-center"
         >
-          <Upload size={20} />
+          <Upload size={18} />
           Upload Context
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {contexts.map((context) => (
-          <div key={context._id} className="bg-white p-4 rounded-lg shadow">
-            <div className="flex justify-between items-start mb-2">
+          <div key={context._id} className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl p-6 rounded-[1.5rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white dark:border-slate-800 hover:-translate-y-1 hover:shadow-lg transition-all flex flex-col h-full group">
+            <div className="flex justify-between items-start mb-4">
               <div>
-                <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                <span className="text-[10px] font-extrabold uppercase tracking-wider bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-2.5 py-1 rounded-md border border-blue-100 dark:border-blue-800">
                   {typeLabels[context.type]}
                 </span>
-                <h3 className="font-semibold mt-2">{context.title}</h3>
+                <h3 className="font-bold text-lg text-slate-800 dark:text-slate-100 mt-2.5 leading-tight">{context.title}</h3>
               </div>
               <button
                 onClick={() => handleDelete(context._id)}
-                className="text-red-600 hover:text-red-700"
+                className="text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 p-1.5 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-lg transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
+                title="Delete Context"
               >
                 <X size={18} />
               </button>
             </div>
             {context.metadata?.topic && (
-              <p className="text-sm text-gray-600">Topic: {context.metadata.topic}</p>
+              <p className="text-sm text-slate-600 dark:text-slate-400 font-medium mb-1 line-clamp-1">Topic: {context.metadata.topic}</p>
             )}
-            <p className="text-sm text-gray-500 mt-2 line-clamp-2">
-              {context.fileUrl ? '📎 File attached' : context.content.substring(0, 100) + '...'}
+            <p className="text-sm text-slate-500 dark:text-slate-500 mt-1 mb-6 flex-grow line-clamp-3 leading-relaxed">
+              {context.fileUrl ? '📎 File attached' : context.content}
             </p>
-            <div className="flex gap-2 mt-3">
+            <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t border-slate-100 dark:border-slate-800/60 w-full">
               {(context.fileUrl || (context.content && context.content.startsWith('http'))) && (
                 <button
                   onClick={() => handleViewFile(context)}
-                  className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 px-2 py-1 rounded hover:bg-blue-50"
+                  className="flex-1 sm:flex-none flex justify-center items-center gap-1.5 text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800/40 px-3 py-2 rounded-xl hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
                 >
                   <Eye size={14} />
                   View
@@ -233,7 +235,7 @@ const ContextManager = ({ subjectId }) => {
                 <a
                   href={context.fileUrl || context.content}
                   download
-                  className="flex items-center gap-1 text-xs text-green-600 hover:text-green-700 px-2 py-1 rounded hover:bg-green-50"
+                  className="flex-1 sm:flex-none flex justify-center items-center gap-1.5 text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-100 dark:border-emerald-800/40 px-3 py-2 rounded-xl hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-colors"
                 >
                   <Download size={14} />
                   Download
@@ -241,7 +243,7 @@ const ContextManager = ({ subjectId }) => {
               )}
               <button
                 onClick={() => handleShareToCommunity(context)}
-                className="flex items-center gap-1 text-xs text-purple-600 hover:text-purple-700 px-2 py-1 rounded hover:bg-purple-50"
+                className="flex flex-1 sm:flex-none justify-center items-center gap-1.5 text-xs font-bold text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/30 border border-purple-100 dark:border-purple-800/40 px-3 py-2 rounded-xl hover:bg-purple-100 dark:hover:bg-purple-900/50 transition-colors sm:ml-auto"
               >
                 <Share2 size={14} />
                 Share
@@ -251,19 +253,19 @@ const ContextManager = ({ subjectId }) => {
         ))}
       </div>
 
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <h2 className="text-2xl font-bold mb-4">Upload Context</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
+      {showModal && createPortal(
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-[9999] p-4 sm:p-6 overflow-y-auto">
+          <div className="bg-white dark:bg-slate-900 p-7 sm:p-10 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-slate-100 dark:border-slate-800 w-full max-w-2xl max-h-[90vh] overflow-y-auto custom-scrollbar my-auto">
+            <h2 className="text-2xl font-extrabold mb-6 text-slate-800 dark:text-slate-100 tracking-tight">Upload Context</h2>
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Type *
+                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1.5 ml-1">
+                  Type <span className="text-rose-500">*</span>
                 </label>
                 <select
                   value={formData.type}
                   onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-slate-800 dark:text-slate-100 font-medium cursor-pointer"
                 >
                   <option value="syllabus">Syllabus</option>
                   <option value="pyq">Past Year Questions</option>
@@ -272,23 +274,24 @@ const ContextManager = ({ subjectId }) => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Title *
+                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1.5 ml-1">
+                  Title <span className="text-rose-500">*</span>
                 </label>
                 <input
                   type="text"
                   required
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  placeholder="E.g., Midterm Syllabus 2024"
+                  className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-slate-800 dark:text-slate-100 font-medium placeholder-slate-400"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Upload File (PDF/Text/Images/Videos) or Enter Content
+                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1.5 ml-1">
+                  Upload File <span className="text-slate-400 font-normal ml-1">(PDF/Images/Videos)</span>
                 </label>
-                <div className="space-y-2">
-                  <div className="flex gap-2">
+                <div className="space-y-3">
+                  <div className="flex flex-col sm:flex-row gap-3">
                     <input
                       type="file"
                       accept=".pdf,.txt,.doc,.docx,.jpg,.jpeg,.png,.mp4,.avi,.mov,.mkv,.webm,.mp3,.wav,.m4v"
@@ -300,34 +303,35 @@ const ContextManager = ({ subjectId }) => {
                           setCloudinaryPublicId(null);
                         }
                       }}
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md"
+                      className="flex-1 px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-slate-800 dark:text-slate-100 font-medium file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900/30 dark:file:text-blue-300 transition-all cursor-pointer shadow-sm"
                     />
                     {file && (
                       <button
                         type="button"
                         onClick={() => handleCloudinaryUpload(file)}
                         disabled={uploadingToCloudinary}
-                        className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-5 py-3 bg-purple-600 text-white rounded-xl hover:bg-purple-700 hover:shadow-lg hover:shadow-purple-500/30 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed font-bold transition-all w-full sm:w-auto"
                       >
                         {uploadingToCloudinary ? (
                           <>
-                            <Loader2 size={16} className="animate-spin" />
+                            <Loader2 size={18} className="animate-spin" />
                             Uploading...
                           </>
                         ) : (
                           <>
-                            <Cloud size={16} />
-                            Upload to Cloudinary
+                            <Cloud size={18} />
+                            Upload to Cloud
                           </>
                         )}
                       </button>
                     )}
                   </div>
                   {cloudinaryUrl && (
-                    <div className="p-2 bg-green-50 border border-green-200 rounded-md">
-                      <div className="flex items-center justify-between mb-2">
-                        <p className="text-sm text-green-700">
-                          ✓ File uploaded to Cloudinary
+                    <div className="p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl">
+                      <div className="flex items-center justify-between mb-3">
+                        <p className="text-sm font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                          File uploaded successfully
                         </p>
                         <button
                           type="button"
@@ -336,35 +340,31 @@ const ContextManager = ({ subjectId }) => {
                             const isVideo = file && file.type.startsWith('video/');
                             
                             if (isPDF) {
-                              // For PDFs, ensure we use the correct URL format
-                              // Cloudinary raw files can be viewed directly
                               window.open(cloudinaryUrl, '_blank');
                             } else if (isVideo) {
-                              // For videos, open in new tab
                               window.open(cloudinaryUrl, '_blank');
                             } else {
                               window.open(cloudinaryUrl, '_blank');
                             }
                           }}
-                          className="px-3 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700 flex items-center gap-1"
+                          className="px-4 py-1.5 bg-emerald-600 dark:bg-emerald-500 text-white text-xs font-bold rounded-lg hover:bg-emerald-700 dark:hover:bg-emerald-600 flex items-center gap-1 transition-colors"
                         >
                           <Eye size={14} />
                           View
                         </button>
                       </div>
                       {file && file.type === 'application/pdf' && (
-                        <div className="mt-2">
-                          <div className="w-full h-64 border border-gray-300 rounded overflow-hidden">
+                        <div className="mt-3">
+                          <div className="w-full h-64 border border-slate-300 dark:border-slate-700 rounded-lg overflow-hidden shadow-inner">
                             <iframe
                               src={`${cloudinaryUrl}#toolbar=0`}
                               className="w-full h-full"
                               title="PDF Preview"
                               onError={(e) => {
-                                // Fallback: show message if iframe fails
                                 e.target.parentElement.innerHTML = `
-                                  <div class="p-4 text-center text-gray-600">
-                                    <p>PDF preview not available. Click "View" to open in new tab.</p>
-                                    <a href="${cloudinaryUrl}" target="_blank" class="text-blue-600 hover:underline mt-2 inline-block">
+                                  <div class="p-4 text-center text-slate-600 dark:text-slate-400 h-full flex flex-col items-center justify-center">
+                                    <p class="font-medium">PDF preview not available. Click "View" to open.</p>
+                                    <a href="${cloudinaryUrl}" target="_blank" class="text-blue-600 dark:text-blue-400 font-bold hover:underline mt-2">
                                       Open PDF
                                     </a>
                                   </div>
@@ -375,11 +375,11 @@ const ContextManager = ({ subjectId }) => {
                         </div>
                       )}
                       {file && file.type.startsWith('video/') && (
-                        <div className="mt-2">
+                        <div className="mt-3 rounded-lg overflow-hidden border border-slate-300 dark:border-slate-700 shadow-inner">
                           <video
                             src={cloudinaryUrl}
                             controls
-                            className="w-full max-h-64 rounded"
+                            className="w-full max-h-64 object-contain bg-black"
                             title="Video Preview"
                           >
                             Your browser does not support the video tag.
@@ -389,40 +389,42 @@ const ContextManager = ({ subjectId }) => {
                     </div>
                   )}
                   {file && !cloudinaryUrl && (
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 px-1 mt-2">
                       File selected: {file.name} ({(file.size / 1024).toFixed(2)} KB)
                     </p>
                   )}
                 </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Content (if not uploading file)
+              <div className="pt-2">
+                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1.5 ml-1">
+                  Content <span className="text-slate-400 font-normal ml-1">(if not uploading file)</span>
                 </label>
                 <textarea
                   value={formData.content}
                   onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                  rows="6"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  rows="5"
+                  className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-slate-800 dark:text-slate-100 font-medium placeholder-slate-400 resize-y"
+                  placeholder="Paste text, notes, or raw content here..."
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Topic (Optional)
+                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1.5 ml-1">
+                  Topic <span className="text-slate-400 font-normal ml-1">(Optional)</span>
                 </label>
                 <input
                   type="text"
                   value={formData.topic}
                   onChange={(e) => setFormData({ ...formData, topic: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  placeholder="E.g., Quantum Mechanics"
+                  className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-slate-800 dark:text-slate-100 font-medium placeholder-slate-400"
                 />
               </div>
-              <div className="flex gap-3">
+              <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
                 <button
                   type="submit"
-                  className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
+                  className="flex-1 bg-blue-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-500/20 transition-all sm:order-2"
                 >
-                  Upload
+                  Confirm Upload
                 </button>
                 <button
                   type="button"
@@ -432,14 +434,15 @@ const ContextManager = ({ subjectId }) => {
                     setCloudinaryUrl(null);
                     setCloudinaryPublicId(null);
                   }}
-                  className="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-300"
+                  className="flex-1 bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold py-3 px-4 rounded-xl transition-all sm:order-1"
                 >
                   Cancel
                 </button>
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

@@ -35,20 +35,20 @@ const ExamMode = ({ subjectId }) => {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-semibold">Exam Preparation Mode</h2>
+      <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-slate-100 tracking-tight">Exam Preparation Mode</h2>
 
-      <div className="border-b border-gray-200">
-        <nav className="flex space-x-8">
+      <div className="border-b border-slate-200 dark:border-slate-800">
+        <nav className="flex space-x-8 overflow-x-auto custom-scrollbar pb-1">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm ${
+                className={`flex items-center gap-2 py-4 px-1 border-b-2 font-bold text-sm transition-colors duration-200 whitespace-nowrap ${
                   activeTab === tab.id
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                    ? 'border-blue-500 text-blue-600 dark:border-blue-400 dark:text-blue-400'
+                    : 'border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700'
                 }`}
               >
                 <Icon size={20} />

@@ -250,14 +250,14 @@ const Styles = () => {
                   <div className="space-y-3 mb-6">
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider w-16">Tone</span>
-                      <span className="text-xs bg-slate-100 text-slate-700 dark:text-slate-200 px-2.5 py-1 rounded-lg font-medium">
+                      <span className="text-xs bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 px-2.5 py-1 rounded-lg font-medium border border-slate-200 dark:border-slate-600">
                         {style.tone.replace('_', ' ')}
                       </span>
                     </div>
                     {style.approximateLength && (
                        <div className="flex items-center gap-2">
                         <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider w-16">Length</span>
-                        <span className="text-xs bg-slate-100 text-slate-700 dark:text-slate-200 px-2.5 py-1 rounded-lg font-medium capitalize">
+                        <span className="text-xs bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 px-2.5 py-1 rounded-lg font-medium capitalize border border-slate-200 dark:border-slate-600">
                           {style.approximateLength}
                         </span>
                       </div>
@@ -266,7 +266,7 @@ const Styles = () => {
                        <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">Sections</span>
                        <div className="flex flex-wrap gap-1.5">
                          {style.sections.map((section, idx) => (
-                           <span key={idx} className="text-[11px] font-medium bg-blue-50 border border-blue-100/50 text-blue-700 px-2 py-1 rounded-md shadow-sm">
+                           <span key={idx} className="text-[11px] font-medium bg-blue-50 dark:bg-blue-900/40 border border-blue-100/50 dark:border-blue-800 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-md shadow-sm">
                              {section}
                            </span>
                          ))}
