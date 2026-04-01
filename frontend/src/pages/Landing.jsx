@@ -172,12 +172,14 @@ const Landing = () => {
                   Get Started Free
                   <ArrowRight size={20} />
                 </Link>
-                <Link
-                  to="/login"
-                  className="w-full sm:w-auto px-8 py-4 bg-white text-slate-700 text-lg font-semibold rounded-2xl border border-slate-200 shadow-sm hover:border-slate-300 hover:bg-slate-50 transition-all duration-300"
+                <a
+                  href="https://www.youtube.com/watch?v=sMn2lGWTmPs"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto px-8 py-4 bg-white text-slate-700 text-lg font-semibold rounded-2xl border border-slate-200 shadow-sm hover:border-slate-300 hover:bg-slate-50 transition-all duration-300 text-center flex items-center justify-center"
                 >
                   View Demo
-                </Link>
+                </a>
               </>
             ) : (
               <Link
@@ -190,6 +192,28 @@ const Landing = () => {
             )}
           </motion.div>
         </div>
+      </section>
+
+      {/* Demo Video Section */}
+      <section className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 sm:pb-28 mt-[-2rem] sm:mt-0">
+        <motion.div
+           initial={{ opacity: 0, y: 30 }}
+           animate={{ opacity: 1, y: 0 }}
+           transition={{ duration: 0.8, delay: 0.4 }}
+           className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-slate-200/50 bg-slate-100 aspect-video ring-4 ring-white"
+        >
+          <iframe 
+            width="100%" 
+            height="100%" 
+            src="https://www.youtube.com/embed/sMn2lGWTmPs?si=Ww7FbM3v7lq9_fbF" 
+            title="YouTube video player" 
+            frameBorder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            referrerPolicy="strict-origin-when-cross-origin" 
+            allowFullScreen
+            className="absolute top-0 left-0 w-full h-full"
+          ></iframe>
+        </motion.div>
       </section>
 
       {/* Features Grid */}
